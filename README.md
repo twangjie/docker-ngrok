@@ -1,4 +1,9 @@
-[![Docker repository](https://img.shields.io/docker/automated/wernight/ngrok.svg)](https://hub.docker.com/r/wernight/ngrok/) [![Build passing](https://img.shields.io/docker/build/wernight/ngrok.svg)](https://hub.docker.com/r/wernight/ngrok/) [![](https://images.microbadger.com/badges/image/wernight/ngrok.svg)](http://microbadger.com/images/wernight/ngrok "Get your own image badge on microbadger.com") [![Codenvy badge](http://beta.codenvy.com/factory/resources/codenvy-contribute.svg)](http://beta.codenvy.com/f?url=https://github.com/wernight/docker-ngrok 'Start development on Codenvy')
+[![Docker repository](https://img.shields.io/docker/automated/wernight/ngrok.svg)](https://hub.docker.com/r/wernight/ngrok/) [![Build passing](https://img.shields.io/docker/build/wernight/ngrok.svg)](https://hub.docker.com/r/wernight/ngrok/) [![Codenvy badge](http://beta.codenvy.com/factory/resources/codenvy-contribute.svg)](http://beta.codenvy.com/f?url=https://github.com/wernight/docker-ngrok 'Start development on Codenvy')
+
+# Supported tags and respective `Dockerfile` links
+
+  * [`latest`](https://github.com/wernight/docker-ngrok/blob/master/Dockerfile) [![](https://images.microbadger.com/badges/image/wernight/ngrok.svg)](http://microbadger.com/images/wernight/ngrok "Get your own image badge on microbadger.com")
+  * [`armhf`](https://github.com/wernight/docker-ngrok/blob/master/Dockerfile.armhf)
 
 A [Docker][docker] image for [ngrok][ngrok] v2, introspected tunnels to localhost.
 It's based on the excellent work of [wizardapps/ngrok][wizardapps/ngrok] and [fnichol/ngrok][fnichol/ngrok].
@@ -37,11 +42,13 @@ Additionally, you can specify one of several environment variable (via `-e`) to 
   * `NGROK_AUTH` - Authentication key for your Ngrok account. This is needed for custom subdomains, custom domains, and HTTP authentication.
   * `NGROK_SUBDOMAIN` - Name of the custom subdomain to use for your tunnel. You must also provide the authentication token.
   * `NGROK_HOSTNAME` - Paying Ngrok customers can specify a custom domain. Only one subdomain or domain can be specified, with the domain taking priority.
+  * `NGROK_REMOTE_ADDR` - Name of the reserved TCP address to use for a TCP tunnel. You must also provide the authentication token.
   * `NGROK_USERNAME` - Username to use for HTTP authentication on the tunnel. You must also specify an authentication token.
   * `NGROK_PASSWORD` - Password to use for HTTP authentication on the tunnel. You must also specify an authentication token.
   * `NGROK_PROTOCOL` - Can either be `HTTP` or `TCP`, and it defaults to `HTTP` if not specified. If set to `TCP`, Ngrok will allocate a port instead of a subdomain and proxy TCP requests directly to your application.
-  * `NGROK_PORT` - Port to expose (defaults to `80` for `HTTP` protocol).
+  * `NGROK_PORT` - Port to expose (defaults to `80` for `HTTP` protocol). If the server is non-local, the hostname can also be specified, e.g. `192.168.0.102:80`.
   * `NGROK_REGION` - Location of the ngrok tunnel server; can be `us` (United States, default), `eu` (Europe), `ap` (Asia/Pacific) or `au` (Australia)
+  * `NGROK_BINDTLS` - Toggle tunneling only HTTP or HTTPS traffic. When `true`, Ngrok only opens the HTTPS endpoint. When `false`, Ngrok only opens the HTTP endpoint
 
 #### Full example
 
@@ -76,8 +83,15 @@ For common cases you may want to create an alias in your `~/.profile` (or `~/.ba
     # For ZSH with Oh-My-Zsh! and 'docker' plugin enabled, you can also enable auto-completion:
     #compdef __docker_containers docker-ngrok
 
-Then to the simple example just do `docker-ngrok web_service_container`.
+Then to run the simple example just do `docker-ngrok web_service_container`.
 
+For non dockerized http targets consider this helper function:
+
+    function expose-ngrok() {
+      docker run --rm --net=host -e NGROK_PORT="$1" wernight/ngrok
+    }
+
+and then visit [localhost:4040](http://localhost:4040) for receiving the links.
 
 
 ## Feedbacks
